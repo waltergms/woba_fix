@@ -25,7 +25,10 @@ export class ReviewSeeder implements Seeder {
           for await (const value of data.value) {
             const reviewData = await reviewFactory(value);
             arrData.push(reviewData);
-            if (arrData.length === 100 || arrData.length >= data.value.length) {
+            if (
+              arrData.length === 1000 ||
+              arrData.length >= data.value.length
+            ) {
               await dataSource
                 .createQueryBuilder()
                 .insert()

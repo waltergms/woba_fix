@@ -1,4 +1,6 @@
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import {
+  ClassSerializerInterceptor,
   Controller,
   Get,
   Post,
@@ -6,37 +8,50 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  HttpCode,
+  HttpStatus,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { PageDto, PageOptionsDto } from '../commom/dtos';
+import { QueryReviewDto } from './dto/query-review.dto';
 
+@ApiTags('Reviews')
 @Controller('review')
+@UseInterceptors(ClassSerializerInterceptor)
 export class ReviewController {
-  constructor(private readonly reviewService: ReviewService) {}
+  constructor(private readonly _reviewService: ReviewService) {}
 
   @Post()
+  @ApiBody({ type: [CreateReviewDto] })
   create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewService.create(createReviewDto);
+    return this._reviewService.create(createReviewDto);
   }
 
   @Get()
-  findAll() {
-    return this.reviewService.findAll();
+  @HttpCode(HttpStatus.OK)
+  async findAll(
+    @Query() pageOptionsDto: PageOptionsDto,
+    @Query() reviewOptionsDto: QueryReviewDto,
+  ): Promise<PageDto<CreateReviewDto>> {
+    return this._reviewService.findAll(pageOptionsDto, reviewOptionsDto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reviewService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this._reviewService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewService.update(+id, updateReviewDto);
+  update(@Param('id') id: number, @Body() updateReviewDto: UpdateReviewDto) {
+    return this._reviewService.update(+id, updateReviewDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this._reviewService.remove(+id);
   }
 }

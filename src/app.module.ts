@@ -15,7 +15,7 @@ import { ReviewModule } from './review/review.module';
       password: 'wobapwd',
       database: 'woba',
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-      synchronize: true,
+      synchronize: false,
     }),
     ReviewModule,
   ],
